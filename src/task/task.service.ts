@@ -11,11 +11,16 @@ export class TaskService {
       const createdCat = new this.TaskModel(taskdata);
       return createdCat.save();
     }
-  
+    async update(taskId: string, updateData: Partial<Task>): Promise<Task | null> {
+        return this.TaskModel.findByIdAndUpdate(taskId, updateData, { new: true }).exec();
+    }
+    async delete(taskId: string): Promise<{ deleted: boolean }> {
+        const result = await this.TaskModel.deleteOne({ _id: taskId }).exec();
+        return { deleted: result.deletedCount > 0 };
+    }
+    
     async findAll(): Promise<Task[]> {
       return this.TaskModel.find().exec();
     }
-  
-
 }
 
