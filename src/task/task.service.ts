@@ -25,7 +25,22 @@ export class TaskService {
     }
     
     async update(taskId: string, updateData: Partial<Task>): Promise<Task | null> {
-        return this.TaskModel.findByIdAndUpdate(taskId, updateData, { new: true }).exec();
+        const session = await this.connection.startSession();
+        session.startTransaction();
+
+        try{
+
+            const updatetask= this.TaskModel.findByIdAndUpdate(taskId, updateData, { new: true }).exec();
+            const updatesave = await (await updatetask).save({ session });
+    
+            await session.commitTransaction(); // ✅ Commit transaction if successful
+            return updatesave;
+        }catch(error){
+            await session.abortTransaction(); // ❌ Rollback on error
+            throw error; // ✅ Rethrow the error for better error handling
+        } finally {
+            session.endSession(); // ✅ Always close session
+        }
     }
     async delete(taskId: string): Promise<{ deleted: boolean }> {
         const result = await this.TaskModel.deleteOne({ _id: taskId }).exec();
