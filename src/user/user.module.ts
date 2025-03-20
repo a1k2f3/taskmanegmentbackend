@@ -3,10 +3,10 @@ import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
 import { Sign } from 'crypto';
-import { Signup } from './user.schema';
+import { Signup, SignupSchema } from './user.schema';
 
 @Module({
-  imports: [MongooseModule.forFeature([{ name: Sign.name, schema: Signup }])],
+  imports: [MongooseModule.forFeature([{ name: Sign.name, schema: SignupSchema }])],
   controllers: [UserController],
   providers: [UserService]
 })
