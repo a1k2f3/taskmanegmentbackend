@@ -7,10 +7,23 @@ import { Connection, Model } from 'mongoose';
 export class TaskService {
     constructor(@InjectConnection() private connection: Connection,@InjectModel(Task.name) private TaskModel: Model<Task>) {}
 
-    async create(taskdata:Partial<Task>): Promise<Task> {
-      const createdCat = new this.TaskModel(taskdata);
-      return createdCat.save();
+    async create(taskData: Partial<Task>): Promise<Task> {
+        const session = await this.connection.startSession();
+        session.startTransaction();
+        try {
+            const createdTask = new this.TaskModel(taskData);
+            const savedTask = await createdTask.save({ session });
+    
+            await session.commitTransaction(); // ✅ Commit transaction if successful
+            return savedTask;
+        } catch (error) {
+            await session.abortTransaction(); // ❌ Rollback on error
+            throw error; // ✅ Rethrow the error for better error handling
+        } finally {
+            session.endSession(); // ✅ Always close session
+        }
     }
+    
     async update(taskId: string, updateData: Partial<Task>): Promise<Task | null> {
         return this.TaskModel.findByIdAndUpdate(taskId, updateData, { new: true }).exec();
     }
