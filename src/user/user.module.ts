@@ -2,7 +2,6 @@ import { Module } from '@nestjs/common';
 import { UserController } from './user.controller';
 import { UserService } from './user.service';
 import { MongooseModule } from '@nestjs/mongoose';
-import { Sign } from 'crypto';
 import { Signup, SignupSchema } from './user.schema';
 @Module({
   imports: [MongooseModule.forFeatureAsync([{ name: Signup.name,  useFactory
@@ -16,11 +15,11 @@ import { Signup, SignupSchema } from './user.schema';
       if (!user.email ) {
         return next(new Error('Description must be at least 10 characters long.'));
       }
-      if (!user.password||user.password<10||user.password>10) {
-        return next(new Error('password must be at least 10 characters long.'));
+      if (!user.password||user.password<3) {
+        return next(new Error('password must be at least 3 characters long.'));
       }
-      if (!user.password!==user.confirmPassword) {
-        return next(new Error('password must be at least 10 characters long.'));
+      if (user.confirmPassword!==user.password) {
+        return next(new Error('password must be equal to passsword'));
       }    
       if (!user.role) {
         return next(new Error('role must be required'));

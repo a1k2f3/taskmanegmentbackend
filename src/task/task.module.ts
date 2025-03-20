@@ -9,19 +9,17 @@ import { Task,TaskSchema } from './task.schema';
     const schema = TaskSchema;
     schema.pre('save', function (next) {
       const task=this as any;
-      if(!task.tite||task.title.length < 3){
-        return next(new Error('Title must be at least 3 characters long.'));
-      }
-      if (!task.  detail || task.  detail.length < 10) {
+      
+      if (!task.detail || task.detail.length < 10) {
         return next(new Error('Description must be at least 10 characters long.'));
       }
       const allowedStatuses = ['pending', 'in-progress', 'completed'];
       if (!allowedStatuses.includes(task.status)) {
         return next(new Error('Invalid status. Allowed values: pending, in-progress, completed.'));
       }
-      if (!task.dueDate || task.dueDate <= new Date()) {
-        return next(new Error('Due Date must be in the future.'));
-      }
+      // if (!task.dueDate || task.dueDate <= new Date()) {
+      //   return next(new Error('Due Date must be in the future.'));
+      // }
       console.log('Task validation passed ✅');
       next();
 

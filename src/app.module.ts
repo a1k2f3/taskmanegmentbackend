@@ -6,7 +6,8 @@ import { UserModule } from './user/user.module';
 import { MongooseModule } from '@nestjs/mongoose';
 @Module({
   imports: [TaskModule, UserModule,
-    MongooseModule.forRoot('mongodb://localhost/taskmanegment')
+    MongooseModule.forRoot('mongodb://localhost/nest'),
+    TaskModule,UserModule
   ],
   controllers: [AppController],
   providers: [AppService],

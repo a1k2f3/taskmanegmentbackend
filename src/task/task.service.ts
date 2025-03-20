@@ -7,20 +7,17 @@ export class TaskService {
     constructor(@InjectConnection() private connection: Connection,@InjectModel(Task.name) private TaskModel: Model<Task>) {}
 
     async create(taskData: Partial<Task>): Promise<Task> {
-        const session = await this.connection.startSession();
-        session.startTransaction();
+       
         try {
             const createdTask = new this.TaskModel(taskData);
-            const savedTask = await createdTask.save({ session });
-    
-            await session.commitTransaction(); // ✅ Commit transaction if successful
+            const savedTask = await createdTask.save(); 
+           
             return savedTask;
         } catch (error) {
-            await session.abortTransaction(); // ❌ Rollback on error
-            throw error; // ✅ Rethrow the error for better error handling
-        } finally {
-            session.endSession(); // ✅ Always close session
-        }
+          // ❌ Rollback on error
+            throw error; 
+                }    
+        
     }
     
     async update(taskId: string, updateData: Partial<Task>): Promise<Task | null> {
