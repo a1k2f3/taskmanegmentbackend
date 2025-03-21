@@ -17,9 +17,9 @@ import { Task,TaskSchema } from './task.schema';
       if (!allowedStatuses.includes(task.status)) {
         return next(new Error('Invalid status. Allowed values: pending, in-progress, completed.'));
       }
-      // if (!task.dueDate || task.dueDate <= new Date()) {
-      //   return next(new Error('Due Date must be in the future.'));
-      // }
+      if (!task.dueDate || task.dueDate <= new Date()) {
+        return next(new Error('Due Date must be in the future.'));
+      }
       console.log('Task validation passed ✅');
       next();
 
